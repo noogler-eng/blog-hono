@@ -8,9 +8,12 @@ JWT_SECRET = ""
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-# [[r2_buckets]]
-# binding = "MY_BUCKET"
-# bucket_name = "my-bucket"
+# suppport for bucket is provided here
+# wrangler r2 bucket list
+# wrangler r2 bucket create hono-r2-upload
+[[r2_buckets]]
+binding = "MY_BUCKET"
+bucket_name = "hono-r2-upload"
 
 # [[d1_databases]]
 # binding = "DB"
