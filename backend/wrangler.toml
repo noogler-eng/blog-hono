@@ -11,6 +11,7 @@ JWT_SECRET = ""
 # suppport for bucket is provided here
 # wrangler r2 bucket list
 # wrangler r2 bucket create hono-r2-upload
+# automatically connects to our bucket
 [[r2_buckets]]
 binding = "MY_BUCKET"
 bucket_name = "hono-r2-upload"
