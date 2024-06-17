@@ -15,6 +15,7 @@ JWT_SECRET = ""
 [[r2_buckets]]
 binding = "MY_BUCKET"
 bucket_name = "hono-r2-upload"
+# simply get and put will be used 
 
 # [[d1_databases]]
 # binding = "DB"
