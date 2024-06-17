@@ -4,6 +4,7 @@ import { SignupInput } from "@100xdevs/medium-common";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
+// combining both signup and signin page in one
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     const navigate = useNavigate();
     const [postInputs, setPostInputs] = useState<SignupInput>({
@@ -14,13 +15,14 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
 
     async function sendRequest() {
         try {
+            // 1. sending data to specifc request 
+            // 2. stroing jwt token to localstorage
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, postInputs);
             const jwt = response.data;
             localStorage.setItem("token", jwt);
             navigate("/blogs");
         } catch(e) {
             alert("Error while signing up")
-            // alert the user here that the request failed
         }
     }
     
