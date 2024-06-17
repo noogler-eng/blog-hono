@@ -1,7 +1,8 @@
 import { Hono } from "hono";
+import { sign } from 'hono/jwt'
+
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { sign } from 'hono/jwt'
 import { signupInput, signinInput } from "@100xdevs/medium-common";
 
 export const userRouter = new Hono<{
@@ -11,6 +12,11 @@ export const userRouter = new Hono<{
     }
 }>();
 
+// 1. c is object contains both req and res
+// 2. creating user if credential is right
+// 3. using prisma as ORM layer
+// 4. signing with jwt
+// 5. returning it in simple text
 userRouter.post('/signup', async (c) => {
     const body = await c.req.json();
     const { success } = signupInput.safeParse(body);
@@ -58,7 +64,10 @@ userRouter.post('/signup', async (c) => {
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-  
+
+    // 1. finding user with this username and password 
+    // 2. if not found then InCorrect Creds
+    // 3. signing jwt with userId of database
     try {
       const user = await prisma.user.findFirst({
         where: {
