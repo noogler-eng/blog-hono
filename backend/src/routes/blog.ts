@@ -2,6 +2,7 @@ import { createBlogInput, updateBlogInput } from "@100xdevs/medium-common";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
+// importing verify from hono/jwt
 import { verify } from "hono/jwt";
 
 export const blogRouter = new Hono<{
@@ -9,11 +10,17 @@ export const blogRouter = new Hono<{
         DATABASE_URL: string;
         JWT_SECRET: string;
     }, 
+    // storing the verified jwt credentials all over the routes
     Variables: {
         userId: string;
     }
 }>();
 
+// 1. middleware for all blogRouter
+// 2. taking authorization key
+// 3. verify with jwt and get userId
+// 4. c.set('') setting up user id
+// 5. work done to next
 blogRouter.use("/*", async (c, next) => {
     const authHeader = c.req.header("authorization") || "";
     try {
@@ -35,6 +42,7 @@ blogRouter.use("/*", async (c, next) => {
     }
 });
 
+// posting blog
 blogRouter.post('/', async (c) => {
     const body = await c.req.json();
     const { success } = createBlogInput.safeParse(body);
@@ -63,6 +71,8 @@ blogRouter.post('/', async (c) => {
     })
 })
 
+// updating blog
+// 1. getting blog id which we have to update
 blogRouter.put('/', async (c) => {
     const body = await c.req.json();
     const { success } = updateBlogInput.safeParse(body);
@@ -92,12 +102,20 @@ blogRouter.put('/', async (c) => {
     })
 })
 
-// Todo: add pagination
+// getting all blogs 
+// 1. what it will be return content, title, id, in author -> name
+// 2. take the page number like 1, 2, 3 ...
+// 3. takeing 4 blogs at each page
+// 4. p = 1 then skipping 0, takeing 4
+// 5. p = 1 then skipping 4, taking 4
 blogRouter.get('/bulk', async (c) => {
+    
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
     const blogs = await prisma.blog.findMany({
+        // skip: (p-1) * 4,
+        // take: 4,
         select: {
             content: true,
             title: true,
@@ -115,6 +133,7 @@ blogRouter.get('/bulk', async (c) => {
     })
 })
 
+// 1. getting an specific blogs 
 blogRouter.get('/:id', async (c) => {
     const id = c.req.param("id");
     const prisma = new PrismaClient({
